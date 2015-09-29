@@ -10,26 +10,33 @@
 <body ng-app='main' ng-controller='MainController'>
     <div class='container'>
         <div id='board'>
-            <div class='tile' ng-repeat='tile in currCubes track by $index' title='{{cubePos[$index]}}' ng-click='selectToggle($index)' ng-class='{picked:selected[$index]==1}'>{{tile}}</div>
+            <div class='tile' ng-repeat='tile in currCubes track by $index' title='{{cubePos[$index]}}' ng-click='selectToggle($index,$event)' ng-class='{picked:selected[$index]==1}'>{{tile}}</div>
         </div>
         <div id='control' class='panel panel-primary draggable col-md-6'>
-            <div class='panel-heading'>Controls</div>
+            <div class='panel-heading'>{{currLang.controls}}</div>
             <div class='panel-body'>
                 <div class='jumbotron'>
-                    <b>New Game:</b>
+                    <b>{{currLang.Language}}:</b>
                     <br/>
-                    <button class='btn btn-success' ng-click='newGame(0)'>&#128035; Start A New Game (Easy)</button>
+                    <select ng-model='currLang' ng-options="lang as lang.lang for lang in language track by lang.lang">
+                    </select><br/>
+                    <b>{{currLang.ng}}:</b>
                     <br/>
-                    <button class='btn btn-warning' ng-click='newGame(1)'>&#128021; Start A New Game (Medium)</button>
+                    <button class='btn btn-success' ng-click='newGame(0)'>&#128035; {{currLang.sng}} ({{currLang.ez}})</button>
                     <br/>
-                    <button class='btn btn-danger' ng-click='newGame(2)'>&#128009; Start A New Game (Hard)</button>
+                    <button class='btn btn-warning' ng-click='newGame(1)'>&#128021; {{currLang.sng}} ({{currLang.md}})</button>
+                    <br/>
+                    <button class='btn btn-danger' ng-click='newGame(2)'>&#128009; {{currLang.sng}} ({{currLang.hd}})</button>
                 </div>
-                <div id='timer' ng-if='timerOn'>Time remaining: {{time/1000}} seconds</div>
+                <div id='timer' ng-if='timerOn'>Time remaining: {{time/1000}} s</div>
+                <hr/>
+                Score:{{score}}
+                <hr/>
                 <table class='table table-striped'>
                     <thead class='success'>
                         <tr>
-                            <th>Word</th>
-                            <th>Points</th>
+                            <th>{{currLang.word}}</th>
+                            <th>{{currLang.points}}</th>
                         </tr>
                     </thead>
                     <tbody  id='wordTab'>
@@ -41,8 +48,8 @@
                 </table>
             </div>
         </div>
+        <div id='halp' ng-click='showInfo();'>?</div>
     </div>
-    {{currWord}}|{{currWord.length}}|{{prevPos}}
     <script src='https://code.jquery.com/jquery-1.11.1.js'></script>
     <script src='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js' /></script>
     <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>

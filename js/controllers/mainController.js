@@ -19,6 +19,81 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
         ['U', 'W', 'I', 'L', 'R', 'G'],
         ['P', 'A', 'C', 'E', 'M', 'D']
     ];
+    $scope.score = 0;
+    $scope.currLang = {
+        lang: 'English',
+        cats: ['English', 'American'],
+        controls: 'Controls',
+        sng: 'Start New Game',
+        ng: 'New Game',
+        ez: 'Easy',
+        md: 'Medium',
+        hd: 'Hard',
+        word: 'Word',
+        points: 'Points',
+        Language: 'Language'
+    };
+    $scope.language = [{
+        lang: 'English',
+        cats: ['English', 'American'],
+        controls: 'Controls',
+        sng: 'Start New Game',
+        ng: 'New Game',
+        ez: 'Easy',
+        md: 'Medium',
+        hd: 'Hard',
+        word: 'Word',
+        points: 'Points',
+        Language: 'Language'
+    }, {
+        lang: 'Spanish',
+        cats: ['Spanish'],
+        controls: 'Control',
+        sng: 'Inicia Nuevo Juego',
+        ng: 'Nuevo Juego',
+        ez: 'Facil',
+        md: 'Medio',
+        hd: 'Dificil',
+        word: 'Palabra',
+        points: 'Puntas',
+        Language: 'Idioma'
+    }, {
+        lang: 'French',
+        cats: ['French'],
+        controls: 'Controls',
+        sng: 'Commencer Une Nouvelle Partie',
+        ng: 'Nouvelle Partie',
+        ez: 'Facile',
+        md: 'Moyen',
+        hd: 'Ardu',
+        word: 'Mot',
+        points: 'Compte',
+        Language: 'Langue'
+    }, {
+        lang: 'German',
+        cats: ['German'],
+        controls: 'Kontrolle',
+        sng: 'Fang An Neus Spiel',
+        ng: 'Neus Spiel',
+        ez: 'Leicht',
+        md: 'Mittel',
+        hd: 'Schwer',
+        word: 'Wort',
+        points: 'Punkte',
+        Language: 'Sprache'
+    }, {
+        lang: 'Latin',
+        cats: ['Latin'],
+        controls: 'Regimina',
+        sng: 'Ludum Novum Incipe',
+        ng: 'Ludum Novum',
+        ez: 'Facile',
+        md: 'Medium',
+        hd: 'Aspera',
+        word: 'Verbum',
+        points: 'Puncti',
+        Language: 'Lingua'
+    }]
     $scope.currWord = '';
     $scope.suggest = true; //whether suggest mode is active;
     $scope.timer = 0; //timer for med and hrd mode;
@@ -98,7 +173,8 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
             return p + c;
         }));
     };
-    $scope.selectToggle = function(cube) {
+    $scope.selectToggle = function(cube, $event) {
+        $event.stopPropagation();
         if ($scope.selected[cube]) {
             //deselecting
             $scope.selected[cube] = 0
@@ -135,47 +211,65 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 }
             }
             if ($scope.suggest && $scope.currWord.length > 2) {
-                //only run if we're in suggest mode and word is of legal length and word's not already obtained
-                $.ajax({
-                    url: 'https://en.wiktionary.org/w/api.php?action=query&prop=categories&titles=' + $scope.currWord.toLowerCase() + '&format=json',
-                    dataType: 'jsonp'
-                }).done(function(res) {
-                    var cats = res.query.pages[Object.keys(res.query.pages)[0]].categories;
-
-                    var isEng = false;
-                    console.log(cats)
-                    for (var i = 0; i < cats.length; i++) {
-                        if (cats[i].title.indexOf('Category:English') !== -1 || cats[i].title.indexOf('Category:American') !== -1 || cats[i].title.indexOf('Category:1000 English')) {
-                            isEng = true;
-                        }
-                    }
-                    if (isEng) {
-                        var val = 0;
-                        if ($scope.currWord.length < 5) {
-                            val = 1;
-                        } else if ($scope.currWord.length < 6) {
-                            val = 2;
-                        } else if ($scope.currWord.length < 7) {
-                            val = 3;
-                        } else if ($scope.currWord.length < 8) {
-                            val = 5;
-                        } else {
-                            val = 11;
-                        }
-                        $scope.words.push({
-                            word: $scope.currWord,
-                            val: val
-                        });
-                        console.log($scope.words)
-                        $scope.$digest();
-                    }
-                })
+                $scope.testWord();
             }
         } else {
             console.log('Cannot pick that!')
         }
 
     }
+    $scope.testWord = function() {
+        $.ajax({
+            url: 'https://en.wiktionary.org/w/api.php?action=query&prop=categories&titles=' + $scope.currWord.toLowerCase() + '&format=json',
+            dataType: 'jsonp'
+        }).done(function(res) {
+            var cats = res.query.pages[Object.keys(res.query.pages)[0]].categories;
+
+            var isLang = false;
+            console.log(cats)
+            for (var i = 0; i < cats.length; i++) {
+                //for each item, we start with a default of 'no relevant cats found'.
+                //we then loop thru all the titles, until we find one that fits a category.
+                console.log($scope.currLang)
+                for (var j = 0; j < $scope.currLang.cats.length; j++) {
+                    console.log('comparing ', cats[i], 'and', $scope.currLang.cats[j])
+                    if (cats[i].title.indexOf($scope.currLang.cats[j]) !== -1) {
+                        isLang = true;
+                    }
+                }
+                // if (cats[i].title.indexOf('Category:English') !== -1 || cats[i].title.indexOf('Category:American') !== -1 || cats[i].title.indexOf('Category:1000 English')) {
+                //     isLang = true;
+                // }
+            }
+            if (isLang) {
+                var val = 0;
+                if ($scope.currWord.length < 5) {
+                    val = 1;
+                } else if ($scope.currWord.length < 6) {
+                    val = 2;
+                } else if ($scope.currWord.length < 7) {
+                    val = 3;
+                } else if ($scope.currWord.length < 8) {
+                    val = 5;
+                } else {
+                    val = 11;
+                }
+                $scope.words.push({
+                    word: $scope.currWord,
+                    val: val
+                });
+                $scope.score += val;
+                if (!$scope.suggest) {
+                    $scope.currWord = '';
+                    for (var i = 0; i < $scope.selected.length; i++) {
+                        $scope.selected[i] = 0;
+                    }
+                }
+                $scope.$digest();
+                return true;
+            }
+        })
+    };
     window.onkeyup = function(e) {
             if (e.which == 27) {
                 //escape clear clears the board
@@ -185,13 +279,13 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                     $scope.selected[i] = 0;
                 }
                 $scope.$digest();
-            } else if (e.which == 13) {
+            } else if (e.which == 13 && !$scope.suggest) {
                 //enter submits a word (if hard mode)
                 e.preventDefault();
-                console.log('user pressed enter');
+                $scope.testWord();
             }
         }
-        //make panel draggable
+        //make panel draggablea
     $(function() {
         $('.draggable').draggable({
             containment: [0, 0, $(window).width() / 2, $(window).height() / 2]
@@ -200,6 +294,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
     $scope.newGame = function(type) {
         $scope.words = [];
         $scope.currWord = '';
+        $scope.score = 0;
         $scope.selected = [];
         clearInterval($scope.timer);
         $scope.time = 180000;
@@ -215,24 +310,38 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 $scope.time -= 100;
                 $scope.$digest();
                 if ($scope.time <= 0) {
-                    bootbox.alert('Game over!');
+                    bootbox.alert('Game over!<hr/>Final Score:' + $scope.score * 2);
                     clearInterval($scope.timer);
                 }
             }, 100);
-        }else{
+        } else {
             //hard mode
             $scope.suggest = false;
             $scope.timerOn = true;
+            $scope.time = 60000;
             $scope.timer = setInterval(function() {
                 $scope.time -= 100;
                 $scope.$digest();
                 if ($scope.time <= 0) {
-                    bootbox.alert('Game over!');
+                    bootbox.alert('Game over!<hr/>Final Score:' + $scope.score * 3);
                     clearInterval($scope.timer);
                 }
             }, 100);
         }
         $scope.drawCubes();
+    };
+    $('body').on('click', function() {
+        $scope.currWord = '';
+        for (var i = 0; i < $scope.selected.length; i++) {
+            $scope.selected[i] = 0;
+        }
+        $scope.$digest();
+    })
+    $('#control').on('click', function(e) {
+        e.stopPropagation();
+    })
+    $scope.showInfo = function() {
+        bootbox.alert('Welcome to Boggular: a multilingual mishmash of Angular and Boggle!<ol><li>Pick your language</li><li>Select a difficulty, and press the appropriate button</li><li>Play!</li></ol><hr/>Notice any issues? Feel free to <a href="mailto:newms3450@gmail.com">contact me!</a>.<br/>Notice an incorrect word (one that either should "count", or shouldn\'t)? Lemme know, and I\'ll fix it!');
     };
 });
 /*NOTES
