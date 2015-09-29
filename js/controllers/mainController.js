@@ -1,6 +1,7 @@
 var app = angular.module("main", []);
 app.controller("MainController", function($scope, $window, $compile, $q) {
     $scope.words = [];
+    $scope.informed = false;
     $scope.cubes = [
         ['R', 'I', 'F', 'O', 'B', 'X'],
         ['I', 'F', 'E', 'H', 'E', 'Y'],
@@ -214,13 +215,13 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 $scope.testWord();
             }
         } else {
-            console.log('Cannot pick that!')
+            $scope.blink(2);
         }
 
     }
     $scope.testWord = function() {
         $.ajax({
-            url: 'https://en.wiktionary.org/w/api.php?action=query&prop=categories&titles=' + $scope.currWord.toLowerCase() + '&format=json',
+            url: 'https://en.wiktionary.org/w/api.php?action=query&prop=categories&cllimit=200&titles=' + $scope.currWord.toLowerCase() + '&format=json',
             dataType: 'jsonp'
         }).done(function(res) {
             var cats = res.query.pages[Object.keys(res.query.pages)[0]].categories;
@@ -241,7 +242,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 //we then loop thru all the titles, until we find one that fits a category.
                 console.log($scope.currLang)
                 for (var j = 0; j < $scope.currLang.cats.length; j++) {
-                    console.log('comparing ', cats[i], 'and', $scope.currLang.cats[j])
+                    console.log('comparing ', cats[i], 'and', $scope.currLang.cats[j], 'for', $scope.currWord)
                     if (cats[i].title.indexOf($scope.currLang.cats[j]) !== -1) {
                         isLang = true;
                     }
@@ -348,7 +349,15 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
         }
         $scope.drawCubes();
     };
+    $scope.unsure=0;
     $('body').on('click', function() {
+        if (!$scope.informed) {
+            $scope.unsure++;
+        }
+        if ($scope.unsure>4 && !$scope.informed){
+            $scope.showInfo();
+            $scope.informed = true;
+        }
         $scope.currWord = '';
         for (var i = 0; i < $scope.selected.length; i++) {
             $scope.selected[i] = 0;
@@ -359,7 +368,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
         e.stopPropagation();
     })
     $scope.showInfo = function() {
-        bootbox.alert('Welcome to Boggular: a multilingual mishmash of Angular and Boggle&#8482;!<ol><li>Pick your language</li><li>Select a difficulty, and press the appropriate button</li><li>Play!</li></ol><hr/>Notice any issues? Feel free to <a href="mailto:newms3450@gmail.com">contact me!</a>.<br/>Notice an incorrect word (one that either should "count", or shouldn\'t)? Lemme know, and I\'ll fix it!');
+        bootbox.alert('Welcome to Boggular: a multilingual mishmash of Angular and Boggle&#8482;!<ol><li>Pick your language</li><li>Select a difficulty, and press the appropriate button</li><li>Play!</li><li>Select a first tile.</li><li>Select another tile next to it either horizontally or vertically (but not diagonally)!</li><li>If in Hard Mode, press enter to submit a word!</li></ol><hr/>Notice any issues? Feel free to <a href="mailto:newms3450@gmail.com">contact me!</a>.<br/>Notice an incorrect word (one that either should "count", or shouldn\'t)? Lemme know, and I\'ll fix it!<br/>Fluent in another language? Feel free to help translate the UI for me (it\'s only nine phrases)!');
     };
     $scope.blink = function(blinkNum) {
         blinkNum--;
