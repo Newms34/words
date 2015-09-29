@@ -374,7 +374,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
         blinkNum--;
         var t = setTimeout(function() {
             $('body').css('background-color', '#722');
-            window.Navigator.vibrate(100);
+            window.navigator.vibrate(100);
             var e = setTimeout(function() {
                 $('body').css('background-color', '#444');
                 if (blinkNum) {
