@@ -207,7 +207,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
             $scope.prevPos.y = $scope.cubePos[ind].y;
             var dup = false;
             for (var n = 0; n < $scope.words.length; n++) {
-                if ($scope.words[n].word == $scope.currWord) {
+                if ($scope.words[n].word.toLowerCase() == $scope.currWord.toLowerCase()) {
                     dup = true;
                 }
             }
@@ -374,6 +374,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
         blinkNum--;
         var t = setTimeout(function() {
             $('body').css('background-color', '#722');
+            window.navigator.vibrate(100);
             var e = setTimeout(function() {
                 $('body').css('background-color', '#444');
                 if (blinkNum) {
