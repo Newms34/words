@@ -227,6 +227,15 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
 
             var isLang = false;
             console.log(cats)
+            if (!cats) {
+                $scope.blink(1);
+                $scope.currWord = '';
+                for (var i = 0; i < $scope.selected.length; i++) {
+                    $scope.selected[i] = 0;
+                }
+                $scope.$digest();
+                return false;
+            }
             for (var i = 0; i < cats.length; i++) {
                 //for each item, we start with a default of 'no relevant cats found'.
                 //we then loop thru all the titles, until we find one that fits a category.
@@ -260,13 +269,16 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 });
                 $scope.score += val;
                 if (!$scope.suggest) {
+                    //hm, so clear board after pressing enter
                     $scope.currWord = '';
                     for (var i = 0; i < $scope.selected.length; i++) {
                         $scope.selected[i] = 0;
                     }
                 }
                 $scope.$digest();
-                return true;
+            } else if (!$scope.suggest) {
+                //not a valid word. Blink!
+                $scope.blink(1);
             }
         })
     };
@@ -309,6 +321,9 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
             $scope.timer = setInterval(function() {
                 $scope.time -= 100;
                 $scope.$digest();
+                if ($scope.time == 5000) {
+                    $scope.blink(5);
+                }
                 if ($scope.time <= 0) {
                     bootbox.alert('Game over!<hr/>Final Score:' + $scope.score * 2);
                     clearInterval($scope.timer);
@@ -322,6 +337,9 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
             $scope.timer = setInterval(function() {
                 $scope.time -= 100;
                 $scope.$digest();
+                if ($scope.time == 5000) {
+                    $scope.blink(5);
+                }
                 if ($scope.time <= 0) {
                     bootbox.alert('Game over!<hr/>Final Score:' + $scope.score * 3);
                     clearInterval($scope.timer);
@@ -343,6 +361,18 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
     $scope.showInfo = function() {
         bootbox.alert('Welcome to Boggular: a multilingual mishmash of Angular and Boggle&#8482;!<ol><li>Pick your language</li><li>Select a difficulty, and press the appropriate button</li><li>Play!</li></ol><hr/>Notice any issues? Feel free to <a href="mailto:newms3450@gmail.com">contact me!</a>.<br/>Notice an incorrect word (one that either should "count", or shouldn\'t)? Lemme know, and I\'ll fix it!');
     };
+    $scope.blink = function(blinkNum) {
+        blinkNum--;
+        var t = setTimeout(function() {
+            $('body').css('background-color', '#722');
+            var e = setTimeout(function() {
+                $('body').css('background-color', '#444');
+                if (blinkNum) {
+                    $scope.blink(blinkNum);
+                }
+            }, 200);
+        }, 200);
+    }
 });
 /*NOTES
 Modes: Easy = No timer, suggest active. Medium = Timer, suggest active. Hard: Timer, suggest inactive
