@@ -341,7 +341,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
         e.stopPropagation();
     })
     $scope.showInfo = function() {
-        bootbox.alert('Welcome to Boggular: a multilingual mishmash of Angular and Boggle!<ol><li>Pick your language</li><li>Select a difficulty, and press the appropriate button</li><li>Play!</li></ol><hr/>Notice any issues? Feel free to <a href="mailto:newms3450@gmail.com">contact me!</a>.<br/>Notice an incorrect word (one that either should "count", or shouldn\'t)? Lemme know, and I\'ll fix it!');
+        bootbox.alert('Welcome to Boggular: a multilingual mishmash of Angular and Boggle&#8482;!<ol><li>Pick your language</li><li>Select a difficulty, and press the appropriate button</li><li>Play!</li></ol><hr/>Notice any issues? Feel free to <a href="mailto:newms3450@gmail.com">contact me!</a>.<br/>Notice an incorrect word (one that either should "count", or shouldn\'t)? Lemme know, and I\'ll fix it!');
     };
 });
 /*NOTES
