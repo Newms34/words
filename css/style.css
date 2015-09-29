@@ -1,0 +1,32 @@
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.tile {
+    display: inline-block;
+    width: 90px;
+    height: 90px;
+    background-color: #fed;
+    border-radius: 5%;
+    text-align: center;
+    font-size: xx-large;
+    border: 1px solid #fff;
+    cursor:pointer;
+}
+
+.tile:hover {
+    background-color: #edc;
+}
+
+#board {
+    width: 365px;
+}
+.picked{
+	background-color: #ccf!important;
+}
+#wordTab{
+    height:50px;
+    overflow:scroll;
+}

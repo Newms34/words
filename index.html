@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Words!</title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+
+<body ng-app='main' ng-controller='MainController'>
+    <div class='container'>
+        <div id='board'>
+            <div class='tile' ng-repeat='tile in currCubes track by $index' title='{{cubePos[$index]}}' ng-click='selectToggle($index)' ng-class='{picked:selected[$index]==1}'>{{tile}}</div>
+        </div>
+        <div id='control' class='panel panel-primary draggable col-md-6'>
+            <div class='panel-heading'>Controls</div>
+            <div class='panel-body'>
+                <div class='jumbotron'>
+                    <b>New Game:</b>
+                    <br/>
+                    <button class='btn btn-success' ng-click='newGame(0)'>&#128035; Start A New Game (Easy)</button>
+                    <br/>
+                    <button class='btn btn-warning' ng-click='newGame(1)'>&#128021; Start A New Game (Medium)</button>
+                    <br/>
+                    <button class='btn btn-danger' ng-click='newGame(2)'>&#128009; Start A New Game (Hard)</button>
+                </div>
+                <div id='timer' ng-if='timerOn'>Time remaining: {{time/1000}} seconds</div>
+                <table class='table table-striped'>
+                    <thead class='success'>
+                        <tr>
+                            <th>Word</th>
+                            <th>Points</th>
+                        </tr>
+                    </thead>
+                    <tbody  id='wordTab'>
+                        <tr ng-repeat='wrd in words track by $index'>
+                            <td>{{wrd.word}}</td>
+                            <td>{{wrd.val}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {{currWord}}|{{currWord.length}}|{{prevPos}}
+    <script src='https://code.jquery.com/jquery-1.11.1.js'></script>
+    <script src='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js' /></script>
+    <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js'></script>
+    <script src='./js/bootbox.min.js'></script>
+    <script src='./js/controllers/mainController.js'></script>
+</body>
+
+</html>
