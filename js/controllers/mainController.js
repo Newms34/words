@@ -1,7 +1,6 @@
 var app = angular.module("main", []);
 app.controller("MainController", function($scope, $window, $compile, $q) {
     $scope.words = [];
-    $scope.informed = false;
     $scope.cubes = [
         ['R', 'I', 'F', 'O', 'B', 'X'],
         ['I', 'F', 'E', 'H', 'E', 'Y'],
@@ -354,12 +353,12 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
     };
     $scope.unsure = 0;
     $('body').on('click', function() {
-        if (!$scope.informed) {
+        if (!localStorage.boggularHint) {
             $scope.unsure++;
         }
-        if ($scope.unsure > 4 && !$scope.informed) {
+        if ($scope.unsure > 4 && !localStorage.boggularHint) {
             $scope.showInfo();
-            $scope.informed = true;
+            localStorage.boggularHint = true;
         }
         $scope.currWord = '';
         for (var i = 0; i < $scope.selected.length; i++) {
