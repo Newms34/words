@@ -16,6 +16,10 @@
             <div class='panel-heading'>{{currLang.controls}}</div>
             <div class='panel-body'>
                 <div class='jumbotron'>
+                    <h3>Game Controls</h3>
+                    <hr/>
+                    <button class='btn btn-info' ng-click='loadBoard()'>Load</button><button class='btn btn-info' ng-click='saveBoard()'>Save</button>
+                    <hr/>
                     <b>{{currLang.Language}}:</b>
                     <br/>
                     <select ng-model='currLang' ng-options="lang as lang.lang for lang in language track by lang.lang">

@@ -304,7 +304,7 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
             containment: [0, 0, $(window).width() / 2, $(window).height() / 2]
         });
     });
-    $scope.newGame = function(type) {
+    $scope.newGame = function(type, loading) {
         $scope.words = [];
         $scope.currWord = '';
         $scope.score = 0;
@@ -347,14 +347,17 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 }
             }, 100);
         }
-        $scope.drawCubes();
+        if (!loading) {
+
+            $scope.drawCubes();
+        }
     };
-    $scope.unsure=0;
+    $scope.unsure = 0;
     $('body').on('click', function() {
         if (!$scope.informed) {
             $scope.unsure++;
         }
-        if ($scope.unsure>4 && !$scope.informed){
+        if ($scope.unsure > 4 && !$scope.informed) {
             $scope.showInfo();
             $scope.informed = true;
         }
@@ -382,12 +385,60 @@ app.controller("MainController", function($scope, $window, $compile, $q) {
                 }
             }, 200);
         }, 200);
+    };
+    $scope.loadBoard = function() {
+        //load a frend's board
+        bootbox.prompt({
+            title: "Load a board",
+            value: "ABCDEFGHIJKLMNOP",
+            callback: function(result) {
+                console.log(result);
+                if (result != null && result.length == 17) {
+                    $scope.currCubes = result.split('');
+                    var difLvl = $scope.currCubes.pop();
+                    for (var i = 0; i < $scope.currCubes.length; i++) {
+                        if ($scope.currCubes[i].toLowerCase() == 'q') {
+                            $scope.currCubes[i] = 'Qu';
+                        }
+                    }
+                    $scope.newGame(difLvl, 1);
+
+                } else if (result != null && result.length !== 16) {
+                    bootbox.alert('I don\'t think this is a valid board!')
+                }
+            }
+        });
+    };
+    $scope.saveBoard = function() {
+        for (var i = 0; i < $scope.currCubes.length; i++) {
+            if ($scope.currCubes[i].toLowerCase() == 'qu') {
+                $scope.currCubes[i] = 'Q';
+            }
+        }
+        var cubeStr = $scope.currCubes.reduce(function(p, c, i, a) {
+            return p + c;
+        });
+        if ($scope.suggest && typeof $scope.timer != 'function') {
+            cubeStr += 0;
+        } else if ($scope.suggest) {
+            cubeStr += 1;
+        } else {
+            cubeStr += 2;
+        }
+        bootbox.dialog({
+            message: cubeStr,
+            title: "Save the following code somewhere safe!",
+            buttons: {
+                success: {
+                    label: "Saved!",
+                    className: "btn-success"
+                },
+            }
+        });
     }
 });
 /*NOTES
-Modes: Easy = No timer, suggest active. Medium = Timer, suggest active. Hard: Timer, suggest inactive
 Need to figure out how to remove EXACTLY the right letter. IOW, if word is 'banana', need to know which 'a' to remove.
-Need to use ng-repeat table to list current words.
-Should we enable other languages? Preferably just spanish/french/german for now
-Way to load other boards (for competition)?
+Way to load other boards (for competition)
+'submit' button for HM (since pressing enter doesn't work if you dont have an enter key)
 */
